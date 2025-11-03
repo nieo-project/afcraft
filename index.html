@@ -39,29 +39,35 @@
 
   .admin-controls{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:30px;}
   .admin-controls button{flex:1;min-width:160px;padding:12px;border:none;border-radius:10px;cursor:pointer;font-weight:600;color:#fff;transition:.3s;}
-  .admin-controls .add-product-btn{background:#4caf50;}
-  .admin-controls .add-product-btn:hover{background:#449d48;}
+  .add-product-btn{background:#4caf50;}
+  .edit-site-btn{background:#007bff;}
+  .add-product-btn:hover{background:#449d48;}
+  .edit-site-btn:hover{background:#0066d1;}
 
   .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
-  .delete-btn{padding:8px 10px;border:none;border-radius:8px;font-weight:600;cursor:pointer;background:#ff4d4d;color:#fff;}
+  .delete-btn, .edit-btn{padding:8px 10px;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:0.3s;}
+  .delete-btn{background:#ff4d4d;color:#fff;}
   .delete-btn:hover{background:#e60000;}
+  .edit-btn{background:#ffc107;color:#fff;}
+  .edit-btn:hover{background:#e0a800;}
 
   footer{background:#fff;text-align:center;padding:20px;border-top:1px solid #eee;color:#555;font-weight:500;}
-  footer a{color:#4a90e2;text-decoration:none;font-weight:600;}
-  footer i{margin-right:8px;color:#e4405f;font-size:18px;}
+  footer a{color:#e4405f;text-decoration:none;font-weight:600;}
+  footer i{margin-right:8px;font-size:18px;color:#e4405f;}
 </style>
 </head>
 <body>
 <header>
   <div class="logo-area">
     <img src="https://via.placeholder.com/50x50.png?text=A" id="siteLogo" alt="logo">
-    <h1 id="siteName">AF Craft Store</h1>
+    <h1 id="siteName">AF Craft</h1>
   </div>
   <div class="profile" id="profileBtn"><i class="fa-solid fa-user"></i></div>
 </header>
 
 <div id="storeGrid" class="store-grid"></div>
 
+<!-- Login -->
 <div id="loginCard">
   <div class="close-btn" id="closeLogin">×</div>
   <h2 style="margin-top:0">Admin Login</h2>
@@ -70,6 +76,7 @@
   <button id="loginBtn" class="primary">Login</button>
 </div>
 
+<!-- Admin Panel -->
 <div id="adminPanel" class="admin-panel">
   <div class="admin-header">
     <h2><i class="fa-solid fa-gear"></i> Admin Dashboard</h2>
@@ -78,14 +85,23 @@
 
   <div class="admin-controls">
     <button class="add-product-btn" id="showAddProduct"><i class="fa-solid fa-plus"></i> Add Product</button>
+    <button class="edit-site-btn" id="showEditSite"><i class="fa-solid fa-pen-to-square"></i> Edit Website</button>
   </div>
 
+  <!-- Add Product -->
   <div id="addProductSection" style="display:none;">
     <input id="pName" type="text" placeholder="Product Name" />
     <input id="pPrice" type="text" placeholder="Price (₹)" />
     <textarea id="pDesc" placeholder="Description"></textarea>
     <input id="pImage" type="file" accept="image/*" />
     <button id="addProduct" class="primary"><i class="fa-solid fa-check"></i> Save Product</button>
+  </div>
+
+  <!-- Edit Site -->
+  <div id="editSiteSection" style="display:none;margin-top:20px;">
+    <input id="newSiteName" type="text" placeholder="New Website Name" />
+    <input id="newLogo" type="file" accept="image/*" />
+    <button id="saveSiteChanges" class="primary"><i class="fa-solid fa-save"></i> Save Changes</button>
   </div>
 
   <h3>Manage Products</h3>
@@ -112,33 +128,54 @@ const homeBtn=document.getElementById('homeBtn');
 const storeGrid=document.getElementById('storeGrid');
 const addProductBtn=document.getElementById('addProduct');
 const showAddProduct=document.getElementById('showAddProduct');
+const showEditSite=document.getElementById('showEditSite');
+const saveSiteChanges=document.getElementById('saveSiteChanges');
+const siteName=document.getElementById('siteName');
+const siteLogo=document.getElementById('siteLogo');
 const productsEl=document.getElementById('products');
 const pName=document.getElementById('pName');
 const pPrice=document.getElementById('pPrice');
 const pDesc=document.getElementById('pDesc');
 const pImage=document.getElementById('pImage');
-let currentImage=null;
+let currentImage=null, editIndex=null, newLogoData=null;
 
-function showToast(msg){const t=document.createElement('div');t.textContent=msg;t.style.position='fixed';t.style.right='20px';t.style.bottom='20px';t.style.background='rgba(0,0,0,0.7)';t.style.color='#fff';t.style.padding='12px 18px';t.style.borderRadius='10px';t.style.boxShadow='0 2px 8px rgba(0,0,0,0.3)';document.body.appendChild(t);setTimeout(()=>t.remove(),2000)}
+function showToast(msg){
+  const t=document.createElement('div');
+  t.textContent=msg;
+  t.style.position='fixed';
+  t.style.right='20px';
+  t.style.bottom='20px';
+  t.style.background='rgba(0,0,0,0.7)';
+  t.style.color='#fff';
+  t.style.padding='12px 18px';
+  t.style.borderRadius='10px';
+  t.style.boxShadow='0 2px 8px rgba(0,0,0,0.3)';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2000);
+}
 
-profileBtn.onclick=()=>{loginCard.style.display='block'};
-closeLogin.onclick=()=>{loginCard.style.display='none'};
+profileBtn.onclick=()=>loginCard.style.display='block';
+closeLogin.onclick=()=>loginCard.style.display='none';
 loginBtn.onclick=()=>{
   if(username.value.trim()===ADMIN_USER&&password.value.trim()===ADMIN_PASS){
     showToast('Welcome Admin');
     loginCard.style.display='none';
     adminPanel.style.display='block';
     storeGrid.style.display='none';
-  } else {
-    showToast('Invalid credentials');
-  }
+  }else showToast('Invalid credentials');
 };
-
 homeBtn.onclick=()=>{adminPanel.style.display='none';storeGrid.style.display='grid';}
 
-showAddProduct.onclick=()=>{document.getElementById('addProductSection').style.display='block';}
+showAddProduct.onclick=()=>toggleSection('addProductSection');
+showEditSite.onclick=()=>toggleSection('editSiteSection');
+function toggleSection(id){
+  document.getElementById('addProductSection').style.display='none';
+  document.getElementById('editSiteSection').style.display='none';
+  document.getElementById(id).style.display='block';
+}
 
 pImage.onchange=()=>{const f=pImage.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{currentImage=r.result};r.readAsDataURL(f)};
+document.getElementById('newLogo').onchange=(e)=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{newLogoData=r.result};r.readAsDataURL(f);}
 
 function loadProducts(){try{return JSON.parse(localStorage.getItem('products'))||[]}catch(e){return[]}}
 function saveProducts(arr){localStorage.setItem('products',JSON.stringify(arr))}
@@ -147,45 +184,41 @@ function render(){
   storeGrid.innerHTML='';
   productsEl.innerHTML='';
   list.forEach((p,i)=>{
-    storeGrid.innerHTML+=`
-      <div class='prod'>
-        <img src='${p.image}' alt='${p.name}'>
-        <div class='name'>${p.name}</div>
-        <div class='price'>₹${p.price}</div>
-        <button class='btn'><i class="fa-solid fa-bag-shopping"></i> Buy Now</button>
-      </div>`;
-    productsEl.innerHTML+=`
-      <div class='prod'>
-        <img src='${p.image}' alt='${p.name}'>
-        <div class='name'>${p.name}</div>
-        <div class='price'>₹${p.price}</div>
-        <button class='delete-btn' onclick='del(${i})'><i class="fa-solid fa-trash"></i> Delete</button>
-      </div>`;
+    storeGrid.innerHTML+=`<div class='prod'><img src='${p.image}'><div class='name'>${p.name}</div><div class='price'>₹${p.price}</div><button class='btn'><i class="fa-solid fa-bag-shopping"></i> Buy</button></div>`;
+    productsEl.innerHTML+=`<div class='prod'><img src='${p.image}'><div class='name'>${p.name}</div><div class='price'>₹${p.price}</div><button class='edit-btn' onclick='edit(${i})'><i class="fa-solid fa-pen"></i> Edit</button><button class='delete-btn' onclick='del(${i})'><i class="fa-solid fa-trash"></i> Delete</button></div>`;
   });
 }
 
 addProductBtn.onclick=()=>{
-  const name=pName.value.trim();
-  const price=pPrice.value.trim();
-  const desc=pDesc.value.trim();
+  const name=pName.value.trim(), price=pPrice.value.trim(), desc=pDesc.value.trim();
   if(!name||!price||!currentImage){showToast('All fields required');return;}
   const list=loadProducts();
-  list.push({name,price,description:desc,image:currentImage});
-  saveProducts(list);
-  render();
-  showToast('Product added');
-  pName.value='';pPrice.value='';pDesc.value='';pImage.value='';currentImage=null;
+  if(editIndex!==null){list[editIndex]={name,price,description:desc,image:currentImage};editIndex=null;showToast('Product updated');}
+  else{list.push({name,price,description:desc,image:currentImage});showToast('Product added');}
+  saveProducts(list);render();resetForm();
 }
 
-window.del=(i)=>{
-  const list=loadProducts();
-  list.splice(i,1);
-  saveProducts(list);
-  render();
-  showToast('Product deleted');
+function resetForm(){pName.value='';pPrice.value='';pDesc.value='';pImage.value='';currentImage=null;}
+
+window.edit=(i)=>{const list=loadProducts();const p=list[i];pName.value=p.name;pPrice.value=p.price;pDesc.value=p.description;currentImage=p.image;editIndex=i;toggleSection('addProductSection');showToast('Edit mode enabled');}
+window.del=(i)=>{const list=loadProducts();list.splice(i,1);saveProducts(list);render();showToast('Product deleted');}
+
+saveSiteChanges.onclick=()=>{
+  const newName=document.getElementById('newSiteName').value.trim();
+  if(newName)localStorage.setItem('siteName',newName);
+  if(newLogoData)localStorage.setItem('siteLogo',newLogoData);
+  loadSite();
+  showToast('Website updated');
 }
 
-render();
+function loadSite(){
+  const n=localStorage.getItem('siteName');
+  const l=localStorage.getItem('siteLogo');
+  if(n)siteName.textContent=n;
+  if(l)siteLogo.src=l;
+}
+
+render();loadSite();
 </script>
 </body>
 </html>
