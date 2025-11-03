@@ -1,134 +1,191 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AF Craft Store</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <style>
-    * {box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: all .3s ease;}
-    body {margin: 0; background: #fff; color: #111;}
-    
-    /* Header */
-    header {
-      background: #fff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 30px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-    }
-    header img {width: 50px; height: 50px; border-radius: 10px;}
-    header h1 {margin: 0; font-size: 26px; font-weight: 700; color: #222;}
-    header .profile {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: linear-gradient(135deg,#4a90e2,#50c878);
-      color: #fff; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 18px;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AF Craft Store</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+  *{box-sizing:border-box;font-family:'Poppins',sans-serif;transition:all .3s ease;}
+  body{margin:0;background:#fff;color:#111;overflow-x:hidden;}
+  header{background:#fff;display:flex;justify-content:space-between;align-items:center;padding:16px 30px;position:sticky;top:0;z-index:1000;box-shadow:0 3px 15px rgba(0,0,0,0.08);}
+  header .logo-area{display:flex;align-items:center;gap:12px;}
+  header img{width:50px;height:50px;border-radius:10px;}
+  header h1{margin:0;font-size:28px;font-weight:700;color:#222;letter-spacing:1px;}
+  header .profile{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#4a90e2,#50c878);cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,0.15);}
+  header .profile:hover{transform:scale(1.05);}
 
-    /* Product Grid */
-    .store-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
-      gap: 24px;
-      padding: 40px;
-    }
-    .prod {
-      background: #fff;
-      padding: 14px;
-      border-radius: 20px;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.05);
-      transition: all 0.4s ease;
-    }
-    .prod:hover {transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.12);}
-    .prod img {width: 100%; height: 220px; object-fit: cover; border-radius: 16px;}
-    .prod .name {font-weight: 700; margin-top: 10px; font-size: 17px;}
-    .prod .price {color: #0a7c4a; font-weight: 600; margin-top: 6px; font-size: 16px;}
-    .btn {
-      padding: 10px;
-      width: 100%;
-      border: none;
-      border-radius: 10px;
-      background: linear-gradient(135deg,#4a90e2,#50c878);
-      color: #fff;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .btn:hover {opacity: 0.9;}
+  .store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:24px;padding:40px;animation:fadeIn .8s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 
-    /* Footer */
-    footer {
-      background: #fff;
-      text-align: center;
-      padding: 20px;
-      border-top: 1px solid #eee;
-      color: #555;
-      font-weight: 500;
-    }
-    footer a {color: #4a90e2; text-decoration: none; font-weight: 600;}
-    footer i {margin-right: 8px; color: #e4405f; font-size: 18px;}
-  </style>
+  .prod{background:#fff;padding:14px;border-radius:20px;box-shadow:0 6px 14px rgba(0,0,0,0.05);transition:all .4s ease;overflow:hidden;}
+  .prod:hover{transform:translateY(-5px);box-shadow:0 8px 20px rgba(0,0,0,0.12);}
+  .prod img{width:100%;height:220px;object-fit:cover;border-radius:16px;margin-bottom:12px;}
+  .prod .name{font-weight:700;font-size:17px;color:#222}
+  .prod .price{color:#0a7c4a;margin-top:6px;font-weight:600;font-size:16px}
+  .btn{padding:10px;border-radius:12px;border:none;cursor:pointer;font-weight:700;background:linear-gradient(135deg,#4a90e2,#50c878);color:#fff;width:100%;}
+  .btn:hover{opacity:0.9}
+
+  #loginCard{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2000;background:#fff;padding:32px;border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,0.25);min-width:320px;animation:scaleUp .4s ease;}
+  @keyframes scaleUp{from{transform:translate(-50%,-50%) scale(0.8);opacity:0;}to{transform:translate(-50%,-50%) scale(1);opacity:1;}}
+  #loginCard .close-btn{position:absolute;top:10px;right:14px;font-size:22px;font-weight:bold;cursor:pointer;color:#666;}
+  input, textarea{width:100%;padding:12px;margin-bottom:12px;border-radius:10px;border:1px solid #ccc;background:#f5f5f5;color:#111}
+  button.primary{width:100%;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,#4a90e2,#50c878);color:#fff;font-weight:700;cursor:pointer;margin-top:6px;font-size:15px;}
+
+  .admin-panel{display:none;padding:30px;animation:fadeIn .8s ease;}
+  .admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+  .admin-header h2{margin:0;font-size:22px;color:#333;display:flex;align-items:center;gap:8px;}
+  .home-btn{background:linear-gradient(135deg,#4a90e2,#50c878);color:#fff;padding:10px 16px;border:none;border-radius:10px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:8px;}
+
+  .admin-controls{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:30px;}
+  .admin-controls button{flex:1;min-width:160px;padding:12px;border:none;border-radius:10px;cursor:pointer;font-weight:600;color:#fff;transition:.3s;}
+  .admin-controls .add-product-btn{background:#4caf50;}
+  .admin-controls .add-product-btn:hover{background:#449d48;}
+
+  .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+  .delete-btn{padding:8px 10px;border:none;border-radius:8px;font-weight:600;cursor:pointer;background:#ff4d4d;color:#fff;}
+  .delete-btn:hover{background:#e60000;}
+
+  footer{background:#fff;text-align:center;padding:20px;border-top:1px solid #eee;color:#555;font-weight:500;}
+  footer a{color:#4a90e2;text-decoration:none;font-weight:600;}
+  footer i{margin-right:8px;color:#e4405f;font-size:18px;}
+</style>
 </head>
 <body>
-  <header>
-    <div class="logo-area">
-      <img src="https://via.placeholder.com/50x50.png?text=A" alt="Logo">
-      <h1>AF Craft Store</h1>
-    </div>
-    <div class="profile" id="adminLogin"><i class="fa-solid fa-user"></i></div>
-  </header>
+<header>
+  <div class="logo-area">
+    <img src="https://via.placeholder.com/50x50.png?text=A" id="siteLogo" alt="logo">
+    <h1 id="siteName">AF Craft Store</h1>
+  </div>
+  <div class="profile" id="profileBtn"><i class="fa-solid fa-user"></i></div>
+</header>
 
-  <div id="storeGrid" class="store-grid"></div>
+<div id="storeGrid" class="store-grid"></div>
 
-  <footer>
-    <p><i class="fa-brands fa-instagram"></i>
-      <a href="https://instagram.com/af_craft._" target="_blank">@af_craft._</a>
-    </p>
-  </footer>
+<div id="loginCard">
+  <div class="close-btn" id="closeLogin">×</div>
+  <h2 style="margin-top:0">Admin Login</h2>
+  <input id="username" type="text" placeholder="Username" />
+  <input id="password" type="password" placeholder="Password" />
+  <button id="loginBtn" class="primary">Login</button>
+</div>
 
-  <script>
-    const storeGrid = document.getElementById('storeGrid');
+<div id="adminPanel" class="admin-panel">
+  <div class="admin-header">
+    <h2><i class="fa-solid fa-gear"></i> Admin Dashboard</h2>
+    <button id="homeBtn" class="home-btn"><i class="fa-solid fa-house"></i> Home</button>
+  </div>
 
-    // Load products from external JSON file
-    async function loadProducts() {
-      try {
-        const response = await fetch('data/products.json');
-        const products = await response.json();
-        renderProducts(products);
-      } catch (err) {
-        console.error('Error loading products:', err);
-        storeGrid.innerHTML = '<p style="color:red;">Unable to load products.</p>';
-      }
-    }
+  <div class="admin-controls">
+    <button class="add-product-btn" id="showAddProduct"><i class="fa-solid fa-plus"></i> Add Product</button>
+  </div>
 
-    // Render products on the page
-    function renderProducts(products) {
-      storeGrid.innerHTML = '';
-      products.forEach(p => {
-        storeGrid.innerHTML += `
-          <div class="prod">
-            <img src="${p.image}" alt="${p.name}">
-            <div class="name">${p.name}</div>
-            <div class="price">₹${p.price}</div>
-            <button class="btn" onclick="buyProduct('${p.name}', '${p.price}')">
-              <i class="fa-solid fa-bag-shopping"></i> Buy Now
-            </button>
-          </div>
-        `;
-      });
-    }
+  <div id="addProductSection" style="display:none;">
+    <input id="pName" type="text" placeholder="Product Name" />
+    <input id="pPrice" type="text" placeholder="Price (₹)" />
+    <textarea id="pDesc" placeholder="Description"></textarea>
+    <input id="pImage" type="file" accept="image/*" />
+    <button id="addProduct" class="primary"><i class="fa-solid fa-check"></i> Save Product</button>
+  </div>
 
-    // Buy button action
-    function buyProduct(name, price) {
-      alert(`You selected "${name}" for ₹${price}.`);
-    }
+  <h3>Manage Products</h3>
+  <div id="products" class="products-grid"></div>
+</div>
 
-    // Load products on page load
-    loadProducts();
-  </script>
+<footer>
+  <p><i class="fa-brands fa-instagram"></i>
+    <a href="https://instagram.com/af_craft._" target="_blank">@af_craft._</a>
+  </p>
+</footer>
+
+<script>
+const ADMIN_USER='@fayaas';
+const ADMIN_PASS='2787';
+const profileBtn=document.getElementById('profileBtn');
+const loginCard=document.getElementById('loginCard');
+const closeLogin=document.getElementById('closeLogin');
+const loginBtn=document.getElementById('loginBtn');
+const username=document.getElementById('username');
+const password=document.getElementById('password');
+const adminPanel=document.getElementById('adminPanel');
+const homeBtn=document.getElementById('homeBtn');
+const storeGrid=document.getElementById('storeGrid');
+const addProductBtn=document.getElementById('addProduct');
+const showAddProduct=document.getElementById('showAddProduct');
+const productsEl=document.getElementById('products');
+const pName=document.getElementById('pName');
+const pPrice=document.getElementById('pPrice');
+const pDesc=document.getElementById('pDesc');
+const pImage=document.getElementById('pImage');
+let currentImage=null;
+
+function showToast(msg){const t=document.createElement('div');t.textContent=msg;t.style.position='fixed';t.style.right='20px';t.style.bottom='20px';t.style.background='rgba(0,0,0,0.7)';t.style.color='#fff';t.style.padding='12px 18px';t.style.borderRadius='10px';t.style.boxShadow='0 2px 8px rgba(0,0,0,0.3)';document.body.appendChild(t);setTimeout(()=>t.remove(),2000)}
+
+profileBtn.onclick=()=>{loginCard.style.display='block'};
+closeLogin.onclick=()=>{loginCard.style.display='none'};
+loginBtn.onclick=()=>{
+  if(username.value.trim()===ADMIN_USER&&password.value.trim()===ADMIN_PASS){
+    showToast('Welcome Admin');
+    loginCard.style.display='none';
+    adminPanel.style.display='block';
+    storeGrid.style.display='none';
+  } else {
+    showToast('Invalid credentials');
+  }
+};
+
+homeBtn.onclick=()=>{adminPanel.style.display='none';storeGrid.style.display='grid';}
+
+showAddProduct.onclick=()=>{document.getElementById('addProductSection').style.display='block';}
+
+pImage.onchange=()=>{const f=pImage.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{currentImage=r.result};r.readAsDataURL(f)};
+
+function loadProducts(){try{return JSON.parse(localStorage.getItem('products'))||[]}catch(e){return[]}}
+function saveProducts(arr){localStorage.setItem('products',JSON.stringify(arr))}
+function render(){
+  const list=loadProducts();
+  storeGrid.innerHTML='';
+  productsEl.innerHTML='';
+  list.forEach((p,i)=>{
+    storeGrid.innerHTML+=`
+      <div class='prod'>
+        <img src='${p.image}' alt='${p.name}'>
+        <div class='name'>${p.name}</div>
+        <div class='price'>₹${p.price}</div>
+        <button class='btn'><i class="fa-solid fa-bag-shopping"></i> Buy Now</button>
+      </div>`;
+    productsEl.innerHTML+=`
+      <div class='prod'>
+        <img src='${p.image}' alt='${p.name}'>
+        <div class='name'>${p.name}</div>
+        <div class='price'>₹${p.price}</div>
+        <button class='delete-btn' onclick='del(${i})'><i class="fa-solid fa-trash"></i> Delete</button>
+      </div>`;
+  });
+}
+
+addProductBtn.onclick=()=>{
+  const name=pName.value.trim();
+  const price=pPrice.value.trim();
+  const desc=pDesc.value.trim();
+  if(!name||!price||!currentImage){showToast('All fields required');return;}
+  const list=loadProducts();
+  list.push({name,price,description:desc,image:currentImage});
+  saveProducts(list);
+  render();
+  showToast('Product added');
+  pName.value='';pPrice.value='';pDesc.value='';pImage.value='';currentImage=null;
+}
+
+window.del=(i)=>{
+  const list=loadProducts();
+  list.splice(i,1);
+  saveProducts(list);
+  render();
+  showToast('Product deleted');
+}
+
+render();
+</script>
 </body>
 </html>
