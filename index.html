@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>AF Craft </title>
+<title>afcraft.online</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <style>
   *{box-sizing:border-box;font-family:'Poppins',sans-serif;transition:all .3s ease;}
   body{margin:0;background:#fff;color:#111;overflow-x:hidden;}
   header{background:#fff;display:flex;justify-content:space-between;align-items:center;padding:16px 30px;position:sticky;top:0;z-index:1000;box-shadow:0 3px 15px rgba(0,0,0,0.08);}
   header .logo-area{display:flex;align-items:center;gap:12px;}
-  header img{width:42px;height:42px;border-radius:8px;}
-  header h1{margin:0;font-size:26px;font-weight:700;color:#222;letter-spacing:1px;}
+  header img{width:50px;height:50px;border-radius:10px;}
+  header h1{margin:0;font-size:28px;font-weight:700;color:#222;letter-spacing:1px;}
   header .profile{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#4a90e2,#50c878);cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,0.15);}
   header .profile:hover{transform:scale(1.05);}
 
@@ -39,8 +39,6 @@
 
   .admin-controls{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:30px;}
   .admin-controls button{flex:1;min-width:160px;padding:12px;border:none;border-radius:10px;cursor:pointer;font-weight:600;color:#fff;transition:.3s;}
-  .admin-controls .edit-site-btn{background:#ff9800;}
-  .admin-controls .edit-site-btn:hover{background:#e68a00;}
   .admin-controls .add-product-btn{background:#4caf50;}
   .admin-controls .add-product-btn:hover{background:#449d48;}
 
@@ -50,13 +48,17 @@
   .delete-btn:hover{background:#e60000;}
   .edit-btn{background:#ffc107;color:#fff;}
   .edit-btn:hover{background:#e0a800;}
+
+  footer{background:#fff;text-align:center;padding:20px;border-top:1px solid #eee;color:#555;font-weight:500;}
+  footer a{color:#4a90e2;text-decoration:none;font-weight:600;}
+  footer i{margin-right:8px;color:#e4405f;font-size:18px;}
 </style>
 </head>
 <body>
 <header>
   <div class="logo-area">
-    <img src="https://via.placeholder.com/40x40.png?text=AF" id="siteLogo" alt="logo">
-    <h1 id="siteName"AF Craft </h1>
+    <img src="https://via.placeholder.com/50x50.png?text=A" id="siteLogo" alt="logo">
+    <h1 id="siteName"> AF Craft </h1>
   </div>
   <div class="profile" id="profileBtn"><i class="fa-solid fa-user"></i></div>
 </header>
@@ -79,7 +81,6 @@
 
   <div class="admin-controls">
     <button class="add-product-btn" id="showAddProduct"><i class="fa-solid fa-plus"></i> Add Product</button>
-    <button class="edit-site-btn" id="editSite"><i class="fa-solid fa-pen"></i> Edit Website</button>
   </div>
 
   <div id="addProductSection" style="display:none;">
@@ -90,21 +91,13 @@
     <button id="addProduct" class="primary"><i class="fa-solid fa-check"></i> Save Product</button>
   </div>
 
-  <div id="editSiteSection" style="display:none;">
-    <input id="newLogo" type="file" accept="image/*" />
-    <input id="newName" type="text" placeholder="Website Name" />
-    <select id="fontSelect">
-      <option value="Poppins">Poppins</option>
-      <option value="Roboto">Roboto</option>
-      <option value="Lato">Lato</option>
-      <option value="Playfair Display">Playfair Display</option>
-    </select>
-    <button id="saveSite" class="primary"><i class="fa-solid fa-save"></i> Save Changes</button>
-  </div>
-
   <h3>Manage Products</h3>
   <div id="products" class="products-grid"></div>
 </div>
+
+<footer>
+  <p><i class="fa-brands fa-instagram"></i><a href="https://instagram.com/af_craft._" target="_blank">@af_craft._</a></p>
+</footer>
 
 <script>
 const ADMIN_USER='@fayaas';
@@ -120,15 +113,8 @@ const homeBtn=document.getElementById('homeBtn');
 const storeGrid=document.getElementById('storeGrid');
 const addProductBtn=document.getElementById('addProduct');
 const showAddProduct=document.getElementById('showAddProduct');
-const editSiteBtn=document.getElementById('editSite');
-const addProductSection=document.getElementById('addProductSection');
-const editSiteSection=document.getElementById('editSiteSection');
 const siteName=document.getElementById('siteName');
 const siteLogo=document.getElementById('siteLogo');
-const saveSite=document.getElementById('saveSite');
-const newLogo=document.getElementById('newLogo');
-const newName=document.getElementById('newName');
-const fontSelect=document.getElementById('fontSelect');
 const productsEl=document.getElementById('products');
 const pName=document.getElementById('pName');
 const pPrice=document.getElementById('pPrice');
@@ -136,7 +122,6 @@ const pDesc=document.getElementById('pDesc');
 const pImage=document.getElementById('pImage');
 let currentImage=null;
 let editIndex=null;
-let logoData=null;
 
 function showToast(msg){const t=document.createElement('div');t.textContent=msg;t.style.position='fixed';t.style.right='20px';t.style.bottom='20px';t.style.background='rgba(0,0,0,0.7)';t.style.color='#fff';t.style.padding='12px 18px';t.style.borderRadius='10px';t.style.boxShadow='0 2px 8px rgba(0,0,0,0.3)';document.body.appendChild(t);setTimeout(()=>t.remove(),2000)}
 
@@ -146,11 +131,9 @@ window.onclick=(e)=>{if(e.target===loginCard){loginCard.style.display='none'}};
 loginBtn.onclick=()=>{if(username.value.trim()===ADMIN_USER&&password.value.trim()===ADMIN_PASS){showToast('Welcome Admin');loginCard.style.display='none';adminPanel.style.display='block';storeGrid.style.display='none';}else{showToast('Invalid credentials');}};
 
 homeBtn.onclick=()=>{adminPanel.style.display='none';storeGrid.style.display='grid';}
-showAddProduct.onclick=()=>{addProductSection.style.display='block';editSiteSection.style.display='none';}
-editSiteBtn.onclick=()=>{editSiteSection.style.display='block';addProductSection.style.display='none';}
+showAddProduct.onclick=()=>{document.getElementById('addProductSection').style.display='block';}
 
 pImage.onchange=()=>{const f=pImage.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{currentImage=r.result};r.readAsDataURL(f)};
-newLogo.onchange=()=>{const f=newLogo.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{logoData=r.result};r.readAsDataURL(f)};
 
 function loadProducts(){try{return JSON.parse(localStorage.getItem('products'))||[]}catch(e){return[]}}
 function saveProducts(arr){localStorage.setItem('products',JSON.stringify(arr))}
@@ -163,11 +146,9 @@ function render(){const list=loadProducts();storeGrid.innerHTML='';productsEl.in
 
 addProductBtn.onclick=()=>{const name=pName.value.trim();const price=pPrice.value.trim();const desc=pDesc.value.trim();if(!name||!price||!currentImage){showToast('All fields required');return}const list=loadProducts();if(editIndex!==null){list[editIndex]={name,price,description:desc,image:currentImage};editIndex=null;showToast('Product updated');}else{list.push({name,price,description:desc,image:currentImage});showToast('Product added');}saveProducts(list);render();pName.value='';pPrice.value='';pDesc.value='';pImage.value='';currentImage=null;}
 
-saveSite.onclick=()=>{if(newName.value){siteName.textContent=newName.value;localStorage.setItem('siteName',newName.value);}if(logoData){siteLogo.src=logoData;localStorage.setItem('siteLogo',logoData);}if(fontSelect.value){document.body.style.fontFamily=fontSelect.value;localStorage.setItem('siteFont',fontSelect.value);}showToast('Website Updated');}
+function loadSite(){const n=localStorage.getItem('siteName');const l=localStorage.getItem('siteLogo');if(n)siteName.textContent=n;if(l)siteLogo.src=l;}
 
-function loadSite(){const n=localStorage.getItem('siteName');const l=localStorage.getItem('siteLogo');const f=localStorage.getItem('siteFont');if(n)siteName.textContent=n;if(l)siteLogo.src=l;if(f)document.body.style.fontFamily=f;}
-
-window.edit=(i)=>{const list=loadProducts();const p=list[i];pName.value=p.name;pPrice.value=p.price;pDesc.value=p.description;currentImage=p.image;editIndex=i;showToast('Edit mode enabled');addProductSection.style.display='block';}
+window.edit=(i)=>{const list=loadProducts();const p=list[i];pName.value=p.name;pPrice.value=p.price;pDesc.value=p.description;currentImage=p.image;editIndex=i;showToast('Edit mode enabled');document.getElementById('addProductSection').style.display='block';}
 window.del=(i)=>{const list=loadProducts();list.splice(i,1);saveProducts(list);render();showToast('Product deleted')}
 window.buy=(i)=>{const p=loadProducts()[i];alert('Purchased '+p.name+' for ₹'+p.price)}
 
